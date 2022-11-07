@@ -54,8 +54,7 @@ macro(check_3rd_party_tool name version url)
       FetchContent_Populate(${name})
       if(EXISTS "${${name}_SOURCE_DIR}"
          AND EXISTS "${${name}_SOURCE_DIR}/CMakeLists.txt")
-        add_subdirectory(${${name}_SOURCE_DIR} ${${name}_BINARY_DIR}
-                         EXCLUDE_FROM_ALL)
+        add_subdirectory(${${name}_SOURCE_DIR} ${${name}_BINARY_DIR})
       endif()
     endif()
   else()
