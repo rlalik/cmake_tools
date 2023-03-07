@@ -60,15 +60,17 @@ macro(find_or_fetch_package name url)
       GIT_REPOSITORY ${url}
       GIT_TAG ${GIT_TAG})
 
-    # FetchContent_MakeAvailable(${name})
-    FetchContent_GetProperties(${name})
-    if(NOT ${name}_POPULATED)
-      FetchContent_Populate(${name})
-      if(EXISTS "${${name}_SOURCE_DIR}"
-         AND EXISTS "${${name}_SOURCE_DIR}/CMakeLists.txt")
+    # FetchContent_MakeAvailable requires CMake-3.14 or newer
+    if(CMAKE_VERSION VERSION_LESS 3.14)
+      FetchContent_GetProperties(${name})
+      if(NOT ${name}_POPULATED)
+        FetchContent_Populate(${name})
         add_subdirectory(${${name}_SOURCE_DIR} ${${name}_BINARY_DIR})
       endif()
+    else()
+      FetchContent_MakeAvailable(${name})
     endif()
+
   else()
     message(STATUS "Uses system-provided ${name}")
   endif()
