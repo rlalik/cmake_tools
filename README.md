@@ -41,14 +41,40 @@ If `EXPORT_OPTION` is used it creates CACHE entry of `USE_BUILTIN_xxx`.
 
 ## shared_or_static()
 
-Creates dependent variable `name_BUILD_TYPE` being either `STATIC` or `SHARED`. If the global `BUILD_SHARED_LIBS` is set, then `name_BUILD_TYPE` is exposed to turn individual target into static. Provides also `${name}_STATIC`.
+### Syntax
+```cmake
+shared_or_static(name)
+```
+
+### Description
+
+Creates variable `${name}_LIBRARY_TYPE` being either `STATIC` or `SHARED` which values depends on combination of `BUILD_SHARED_LIBS` and `${name}_BUILD_SHARED`.
+
+* If neither of them is set, then `name_LIBRARY_TYPE` is undefined
+* If only `BUILD_SHARED_LIBS` is set, `${name}_LIBRARY_TYPE = BUILD_SHARED_LIBS ? SHARED : STATIC`
+* Otherwise `${name}_LIBRARY_TYPE = ${name}_BUILD_SHARED ? SHARED : STATIC`
 
 ### Usage
 
+1. Build type controlled via options
 ```cmake
 include(shared_or_static)
 
-shared_or_sttaic(MyLibBuildType)
+option(BUILD_SHARED_LIBS "Global option" OFF)
+option(MyLibBuildType_BUILD_SHARED "Specific option" OFF)
 
-add_library(MyLib ${MyLibBuildType} source.cxx)
+shared_or_static(MyLibBuildType)
+
+add_library(MyLib ${MyLibBuildType}_LIBRARY_TYPE source.cxx)
+```
+1. Build type hardcoded
+```cmake
+include(shared_or_static)
+
+set(BUILD_SHARED_LIBS ON)
+set(MyLibBuildType_BUILD_SHARED OFF)
+
+shared_or_static(MyLibBuildType)
+
+add_library(MyLib ${MyLibBuildType}_LIBRARY_TYPE source.cxx) # MyLib is STATIC
 ```

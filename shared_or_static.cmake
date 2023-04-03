@@ -1,20 +1,19 @@
-include(CMakeDependentOption)
-
 macro(shared_or_static name)
 
-  cmake_dependent_option(
-    ${name}_STATIC # option variable
-    "Build ${name} static library" # description
-    ON # default value if exposed; user can override
-    "NOT BUILD_SHARED_LIBS" # condition to expose option
-    OFF # value if not exposed; user can't override
-  )
-
-  # set build type based on dependent option
-  if(${name}_STATIC)
-    set(${name}_BUILD_TYPE STATIC)
+  if(NOT DEFINED BUILD_SHARED_LIBS AND NOT DEFINED ${name}_BUILD_SHARED)
+    set(${name}_LIBRARY_TYPE "")
+  elseif(NOT DEFINED ${name}_BUILD_SHARED)
+    if(BUILD_SHARED_LIBS)
+      set(${name}_LIBRARY_TYPE SHARED)
+    else()
+      set(${name}_LIBRARY_TYPE STATIC)
+    endif()
   else()
-    set(${name}_BUILD_TYPE SHARED)
+    if(${name}_BUILD_SHARED)
+      set(${name}_LIBRARY_TYPE SHARED)
+    else()
+      set(${name}_LIBRARY_TYPE STATIC)
+    endif()
   endif()
 
 endmacro()
