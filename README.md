@@ -37,3 +37,18 @@ If variable `USE_BUILTIN_xxx` (where `xxx` is the capitalized `name`) is set, it
 `cmake -DUSE_BUILTIN_xxx=FETCH`
 
 If `EXPORT_OPTION` is used it creates CACHE entry of `USE_BUILTIN_xxx`.
+
+
+## shared_or_static()
+
+Creates dependent variable `name_BUILD_TYPE` being either `STATIC` or `SHARED`. If the global `BUILD_SHARED_LIBS` is set, then `name_BUILD_TYPE` is exposed to turn individual target into static. Provides also `${name}_STATIC`.
+
+### Usage
+
+```cmake
+include(shared_or_static)
+
+shared_or_sttaic(MyLibBuildType)
+
+add_library(MyLib ${MyLibBuildType} source.cxx)
+```
